@@ -36,23 +36,36 @@ typedef struct Locacao {
 } Locacao;
 
 int my_strstr(char *str, char *word) {
-  char *p1 = str;
-  char *p2 = word;
-  char *p1_start;
+  char *ponteiro_string = str;
+  char *ponteiro_palavra = word;
+  char *ponteiro_string_comeco;
 
-  for (; *p1++; ) {
-    if (tolower(*p1) == tolower(*word)) {
-      p1_start = p1;
-      p2 = word;
+  //ponteiro_string aponta para o primeiro endereço da string
+  // *ponteiro_string mostra o conteúdo, ou seja, a letra
 
-      while ((*p1 != '\0' && *p2 != '\0') && (tolower(*p1) == tolower(*p2))) {
-        p1++;
-        p2++;
+  //enquanto o conteudo de ponteiro nao for '\0' itere e avance o ponteiro
+  for ( ; *ponteiro_string != '\0'; ponteiro_string++) {
+
+    // verificamos se a letra no ponteiro da string é o mesmo do começo da palavra
+    if (tolower(*ponteiro_string) == tolower(*word)) {
+
+      // marcamos onde o ponteiro da string parou
+      ponteiro_string_comeco = ponteiro_string;
+
+      // redefinimos o ponteiro da palavra, caso ele tenha sido alterado em algum momento
+      ponteiro_palavra = word;
+
+      // enquanto nenhum dos ponteiros apontar para o fim ('\0') e o conteudo dos ponteiros forem iguais, avance os ponteiros;
+      while ((*ponteiro_string != '\0' && *ponteiro_palavra != '\0') && (tolower(*ponteiro_string) == tolower(*ponteiro_palavra))) {
+        ponteiro_string++;
+        ponteiro_palavra++;
       }
 
-      if (*p2 == '\0') return 1;
+      // se chegames ao final do ponteiro da palavra, então ela está presente na string, retorne sucesso.
+      if (*ponteiro_palavra == '\0') return 1;
 
-      p1 = p1_start;
+      // se não, volte o ponteiro da string para onde estavamos antes de comparar com a palavra.
+      ponteiro_string = ponteiro_string_comeco;
     }
   }
 
@@ -62,7 +75,12 @@ int my_strstr(char *str, char *word) {
 int my_strlen(const char *str) {
   int count = 0;
 
-  while (*str++) count++;
+  while (*str != '\0') {
+    count++;
+
+    // avança o ponteiro da string
+    str++;
+  }
 
   return count;
 }
@@ -70,8 +88,10 @@ int my_strlen(const char *str) {
 int isCpf(char *cpf) {
   if (my_strlen(cpf) != 11) return 0;
 
+  // crio uma copia do ponteiro da string para poder iterar sobre ela sem perder a ref para a string original
   char *p = cpf;
 
+  // isso aqui vai ver se o cpf não é 111.111.111-11
   int iguais = 1;
   while (*(p + 1)) {
     if (*p != *(p + 1)) {
@@ -90,7 +110,11 @@ int isCpf(char *cpf) {
   p = cpf;
 
   for (int i = 0; i < 9; i++) {
-    soma += (*p++ - '0') * peso--;
+
+    //soma é um int, então ele pega o valor char de p e subtrai '0', ou seja, '8' (em ascii é 56) - '0' que é igual a 48, retornando o int 8
+    soma += (*p - '0') * peso;
+    p++;
+    peso--;
   }
 
   resto = soma % 11;
@@ -102,13 +126,16 @@ int isCpf(char *cpf) {
   p = cpf;
 
   for (int i = 0; i < 10; i++) {
-    soma += (*p++ - '0') * peso--;
+    soma += (*p - '0') * peso;
+    p++;
+    peso--;
   }
 
   resto = soma % 11;
   if (resto < 2) digito2 = 0;
   else digito2 = 11 - resto;
 
+  // escrever assim é o mesmo que escrever cpf[9] e cpf[10]
   if ((*(cpf + 9) - '0') != digito1) return 0;
   if ((*(cpf + 10) - '0') != digito2) return 0;
 
@@ -147,7 +174,7 @@ int main() {
   Filme *filmes;
   Locacao *locacoes;
 
-  int achou = my_strstr("que texto enorme gigante sobre O Poderoso Chefao. Caramba que sentença enorme, como alguem acharia uma frase aqui no meio?", "o poderoso chefao");
+  int achou = my_strstr("que texto enorme gigante sobre O Poderoso Cheo. Caramba que sentença enorme, como alguem acharia uma frase aqui no meio?", "o poderoso chefao");
 
   printf("%d\n", achou);
 
