@@ -72,6 +72,20 @@ int my_strstr(char *str, char *word) {
   return 0;
 }
 
+int my_strcmp(char *str1, char *str2) {
+
+  while (*str1 && *str2) {
+    if (*str1 != *str2) return 1;
+    str1++;
+    str2++;
+  }
+  
+  // Se chegou aqui, as duas terminaram ou uma terminou antes
+  if (*str1 != *str2) return 1;
+
+  return 0;
+}
+
 int my_strlen(const char *str) {
   int count = 0;
 
@@ -142,6 +156,15 @@ int isCpf(char *cpf) {
   return 1;
 }
 
+int buscaCpf(Cliente *arr, int qtd, char *cpfProcurado) {
+  for (int i = 0; i < qtd; i++) {    
+    if (my_strcmp(arr[i].cpf, cpfProcurado) == 0) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 int buscaCliente(Cliente *arr, int qtd, int idProcurado) {
   for (int i = 0; i < qtd; i++) {
     if (arr[i].id == idProcurado) {
@@ -174,9 +197,15 @@ int main() {
   Filme *filmes;
   Locacao *locacoes;
 
-  int achou = my_strstr("que texto enorme gigante sobre O Poderoso Cheo. Caramba que sentença enorme, como alguem acharia uma frase aqui no meio?", "o poderoso chefao");
+  Cliente joao = {123, "Joao", "16846063650", "123"};
 
-  printf("%d\n", achou);
+  clientes = calloc(5, sizeof(Cliente));
+
+  clientes[3] = joao;
+
+  // printf("%s\n", clientes[2].cpf);
+
+  printf("%d\n", buscaCpf(clientes, 5, "16846063650"));
 
   return 0;
 }
