@@ -74,9 +74,14 @@ int my_strstr(char *str, char *word) {
 
 int my_strcmp(char *str1, char *str2) {
 
-  for (int i = 0; str1[i] != '\0'; i++) {
-    if (str1[i] != str2[i]) return 1;
+  while (*str1 && *str2) {
+    if (*str1 != *str2) return 1;
+    str1++;
+    str2++;
   }
+  
+  // Se chegou aqui, as duas terminaram ou uma terminou antes
+  if (*str1 != *str2) return 1;
 
   return 0;
 }
@@ -152,12 +157,8 @@ int isCpf(char *cpf) {
 }
 
 int buscaCpf(Cliente *arr, int qtd, char *cpfProcurado) {
-  for (int i = 0; i < qtd; i++) {
-
-    printf("%s\n", arr[i].cpf);
-    printf("%s\n", cpfProcurado);
-    
-    if (my_strcmp(arr[i].cpf, cpfProcurado) == 1) {
+  for (int i = 0; i < qtd; i++) {    
+    if (my_strcmp(arr[i].cpf, cpfProcurado) == 0) {
       return i;
     }
   }
@@ -196,11 +197,11 @@ int main() {
   Filme *filmes;
   Locacao *locacoes;
 
-  Cliente joao = {123, "Joao", "16846063650", 123};
+  Cliente joao = {123, "Joao", "16846063650", "123"};
 
-  clientes = malloc(sizeof(Cliente) * 5);
+  clientes = calloc(5, sizeof(Cliente));
 
-  clientes[1] = joao;
+  clientes[3] = joao;
 
   // printf("%s\n", clientes[2].cpf);
 
