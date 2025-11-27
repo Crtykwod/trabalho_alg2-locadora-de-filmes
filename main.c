@@ -72,6 +72,19 @@ int my_strstr(char *str, char *word) {
   return 0;
 }
 
+int my_strcmp(char *str1, char *str2) {
+  char *ptr_str1 = str1;
+  char *ptr_str2 = str2;
+
+  while (*ptr_str1 && *ptr_str2) {
+    if (*ptr_str1 != *ptr_str2) return 1;
+    ptr_str1++;
+    ptr_str2++;
+  }
+
+  return 0;
+}
+
 int my_strlen(const char *str) {
   int count = 0;
 
