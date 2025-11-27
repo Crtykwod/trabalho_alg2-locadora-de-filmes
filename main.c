@@ -73,13 +73,9 @@ int my_strstr(char *str, char *word) {
 }
 
 int my_strcmp(char *str1, char *str2) {
-  char *ptr_str1 = str1;
-  char *ptr_str2 = str2;
 
-  while (*ptr_str1 && *ptr_str2) {
-    if (*ptr_str1 != *ptr_str2) return 1;
-    ptr_str1++;
-    ptr_str2++;
+  for (int i = 0; str1[i] != '\0'; i++) {
+    if (str1[i] != str2[i]) return 1;
   }
 
   return 0;
@@ -155,6 +151,19 @@ int isCpf(char *cpf) {
   return 1;
 }
 
+int buscaCpf(Cliente *arr, int qtd, char *cpfProcurado) {
+  for (int i = 0; i < qtd; i++) {
+
+    printf("%s\n", arr[i].cpf);
+    printf("%s\n", cpfProcurado);
+    
+    if (my_strcmp(arr[i].cpf, cpfProcurado) == 1) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 int buscaCliente(Cliente *arr, int qtd, int idProcurado) {
   for (int i = 0; i < qtd; i++) {
     if (arr[i].id == idProcurado) {
@@ -187,9 +196,15 @@ int main() {
   Filme *filmes;
   Locacao *locacoes;
 
-  int achou = my_strstr("que texto enorme gigante sobre O Poderoso Cheo. Caramba que sentença enorme, como alguem acharia uma frase aqui no meio?", "o poderoso chefao");
+  Cliente joao = {123, "Joao", "16846063650", 123};
 
-  printf("%d\n", achou);
+  clientes = malloc(sizeof(Cliente) * 5);
+
+  clientes[1] = joao;
+
+  // printf("%s\n", clientes[2].cpf);
+
+  printf("%d\n", buscaCpf(clientes, 5, "16846063650"));
 
   return 0;
 }
