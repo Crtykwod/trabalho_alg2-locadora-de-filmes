@@ -1,211 +1,111 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
+#define max 50
 
-typedef struct Data {
+//funcoes
+void limpar_terminal() {
+#ifdef _WIN32
+  system("cls");
+#else
+  system("clear");
+#endif
+}
+
+int menu_principal() {
+
+  printf("PLATAFORMA DE GERENCIAMENTO DE ASSINATURAS\n\n");
+  printf("Escolha umas das seguintes opcoes:\n");
+  printf("1 - Cadastrar um novo usuario.\n");
+  printf("2 - Cadastrar um novo servico de streaming.\n");
+  printf("3 - Consultar dados de uma assinatura.\n\n");
+
+  int a;
+  scanf("%d", &a);
+  return a;
+}
+
+int consulta_assinatura(int a) {
+
+  printf("CONSULTA DE DADOS DE ASSINATURAS\n\n");
+  printf("Escolha umas das seguintes opcoes:\n");
+  printf("1 - Consulta por cliente.\n");
+  printf("2 - Consulta por plataforma.\n");
+  printf("3 - Consultar assinatura especifica.\n\n");
+
+  scanf("%d", &a);
+  return a;
+}
+
+//structs
+typedef struct {
   int dia;
   int mes;
   int ano;
-} Data;
 
-typedef struct Cliente {
-  int   id;
-  char  nome[100];
-  char  cpf[13]; //Apenas numeros + \n + \0
-  char  phone[16]; //Apenas numeros +5534912345678 + 1 \n + 1 \0
+}DATAS;
 
-} Cliente;
+typedef struct {
+  char nome[max];
+  char cpf[14]; //contandos hifens e pontos
+  int id_usuario; //campo unico da struct
+  char phone[13]; //contando parenteses e hifens
+  char email[max];
 
-typedef struct Filme {
-  int   id;
-  char  titulo[100];
-  char  genero[30];
-  int   ano_lancamento;
-  float preco_diaria;
-  int   estoque;
-} Filme;
+}USUARIOS;
 
-typedef struct Locacao {
-  int   id;
-  int   id_cliente;
-  int   id_filme;
-  Data  data_locacao;
-  Data  data_devolucao_prevista;
-  int   foiDevolvido; //0 e 1
+typedef struct {
+  char nome_plataforma[max]; //campo unico da struct
+  int id_plataforma;
+  char categoria[max];
+  float preco;
+  char site_url[max];
+
+}PLATAFORMAS;
+
+typedef struct {
+  int id_usuario;
+  int id_plataforma;
+  int id_assinatura; //campo unico da struct
+  DATAS data_inicio_assinatura;
+  DATAS data_proxima_cobranca;
+  int ativa;
   float valor_pago;
-} Locacao;
 
-int my_strstr(char *str, char *word) {
-  char *ponteiro_string = str;
-  char *ponteiro_palavra = word;
-  char *ponteiro_string_comeco;
-
-  //ponteiro_string aponta para o primeiro endereço da string
-  // *ponteiro_string mostra o conteúdo, ou seja, a letra
-
-  //enquanto o conteudo de ponteiro nao for '\0' itere e avance o ponteiro
-  for ( ; *ponteiro_string != '\0'; ponteiro_string++) {
-
-    // verificamos se a letra no ponteiro da string é o mesmo do começo da palavra
-    if (tolower(*ponteiro_string) == tolower(*word)) {
-
-      // marcamos onde o ponteiro da string parou
-      ponteiro_string_comeco = ponteiro_string;
-
-      // redefinimos o ponteiro da palavra, caso ele tenha sido alterado em algum momento
-      ponteiro_palavra = word;
-
-      // enquanto nenhum dos ponteiros apontar para o fim ('\0') e o conteudo dos ponteiros forem iguais, avance os ponteiros;
-      while ((*ponteiro_string != '\0' && *ponteiro_palavra != '\0') && (tolower(*ponteiro_string) == tolower(*ponteiro_palavra))) {
-        ponteiro_string++;
-        ponteiro_palavra++;
-      }
-
-      // se chegames ao final do ponteiro da palavra, então ela está presente na string, retorne sucesso.
-      if (*ponteiro_palavra == '\0') return 1;
-
-      // se não, volte o ponteiro da string para onde estavamos antes de comparar com a palavra.
-      ponteiro_string = ponteiro_string_comeco;
-    }
-  }
-
-  return 0;
-}
-
-int my_strcmp(char *str1, char *str2) {
-
-  while (*str1 && *str2) {
-    if (*str1 != *str2) return 1;
-    str1++;
-    str2++;
-  }
-  
-  // Se chegou aqui, as duas terminaram ou uma terminou antes
-  if (*str1 != *str2) return 1;
-
-  return 0;
-}
-
-int my_strlen(const char *str) {
-  int count = 0;
-
-  while (*str != '\0') {
-    count++;
-
-    // avança o ponteiro da string
-    str++;
-  }
-
-  return count;
-}
-
-int isCpf(char *cpf) {
-  if (my_strlen(cpf) != 11) return 0;
-
-  // crio uma copia do ponteiro da string para poder iterar sobre ela sem perder a ref para a string original
-  char *p = cpf;
-
-  // isso aqui vai ver se o cpf não é 111.111.111-11
-  int iguais = 1;
-  while (*(p + 1)) {
-    if (*p != *(p + 1)) {
-      iguais = 0;
-      break;
-    }
-    p++;
-  }
-  if (iguais) return 0;
-
-  int soma, resto, digito1, digito2;
-  int peso;
-
-  soma = 0;
-  peso = 10;
-  p = cpf;
-
-  for (int i = 0; i < 9; i++) {
-
-    //soma é um int, então ele pega o valor char de p e subtrai '0', ou seja, '8' (em ascii é 56) - '0' que é igual a 48, retornando o int 8
-    soma += (*p - '0') * peso;
-    p++;
-    peso--;
-  }
-
-  resto = soma % 11;
-  if (resto < 2) digito1 = 0;
-  else digito1 = 11 - resto;
-
-  soma = 0;
-  peso = 11;
-  p = cpf;
-
-  for (int i = 0; i < 10; i++) {
-    soma += (*p - '0') * peso;
-    p++;
-    peso--;
-  }
-
-  resto = soma % 11;
-  if (resto < 2) digito2 = 0;
-  else digito2 = 11 - resto;
-
-  // escrever assim é o mesmo que escrever cpf[9] e cpf[10]
-  if ((*(cpf + 9) - '0') != digito1) return 0;
-  if ((*(cpf + 10) - '0') != digito2) return 0;
-
-  return 1;
-}
-
-int buscaCpf(Cliente *arr, int qtd, char *cpfProcurado) {
-  for (int i = 0; i < qtd; i++) {    
-    if (my_strcmp(arr[i].cpf, cpfProcurado) == 0) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-int buscaCliente(Cliente *arr, int qtd, int idProcurado) {
-  for (int i = 0; i < qtd; i++) {
-    if (arr[i].id == idProcurado) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-int buscaFilme(Filme *arr, int qtd, int idProcurado) {
-  for (int i = 0; i < qtd; i++) {
-    if (arr[i].id == idProcurado) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-int buscaLocacao(Locacao *arr, int qtd, int idProcurado) {
-  for (int i = 0; i < qtd; i++) {
-    if (arr[i].id == idProcurado) {
-      return i;
-    }
-  }
-  return -1;
-}
+}ASSINATURAS;
 
 int main() {
-  Cliente *clientes;
-  Filme *filmes;
-  Locacao *locacoes;
 
-  Cliente joao = {123, "Joao", "16846063650", "123"};
+  int teste;
 
-  clientes = calloc(5, sizeof(Cliente));
+  teste = menu_principal();
+  limpar_terminal();
 
-  clientes[3] = joao;
+  if (teste <= 0 || teste > 3) {
+    while (1) {
+      limpar_terminal();
+      printf("Por favor insira uma opcao valida!\n");
+      teste = menu_principal();
+      if (teste >= 1 && teste <= 3) {
+        break;
+      }
 
-  // printf("%s\n", clientes[2].cpf);
+    }
+  }
+  limpar_terminal();
 
-  printf("%d\n", buscaCpf(clientes, 5, "16846063650"));
+  if (teste == 1) {
+
+    limpar_terminal();
+  } else if (teste == 2) {
+
+    limpar_terminal();
+  } else {
+    consulta_assinatura(teste);
+    limpar_terminal();
+  }
 
   return 0;
+
 }
