@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #define max 50
+//TESTE
 
 //funcoes
 void limpar_terminal() {
