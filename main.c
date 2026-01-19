@@ -3,8 +3,9 @@
 #include <ctype.h>
 #include <string.h>
 #define max 50
+#define max_usuarios 50
 
-//funcoes
+//menus
 void limpar_terminal() {
 #ifdef _WIN32
   system("cls");
@@ -91,9 +92,9 @@ typedef struct {
 
 typedef struct {
   char nome[max];
-  char cpf[14]; //contandos hifens e pontos
+  char cpf[15]; //contandos hifens e pontos
   int id_usuario; //campo unico da struct
-  char phone[13]; //contando parenteses e hifens
+  char phone[14]; //contando parenteses e hifens
   char email[max];
 
 }USUARIOS;
@@ -117,6 +118,108 @@ typedef struct {
   float valor_pago;
 
 }ASSINATURAS;
+
+USUARIOS usuarios[max_usuarios];
+int total_usuarios = 0;
+
+//funcoes de cadastro
+void cadastrar_usuario(){
+
+  if(total_usuarios >= max_usuarios){
+    printf("Limite de usuarios atingido!\n");
+    return;
+  }
+
+  printf("Digite os dados do novo usuario.\n\n");
+  printf("Nome: ");\
+  getchar();
+  fgets(usuarios[total_usuarios].nome, max, stdin);
+
+  //pra remover o \n no final do nome do caba
+  for(int i = 0; i < max; i++){
+    if(usuarios[total_usuarios].nome[i] == '\n'){
+      usuarios[total_usuarios].nome[i] = '\0';
+    }
+  }
+
+  printf("CPF: ");
+  fgets(usuarios[total_usuarios].cpf, 15, stdin);
+  
+  while(usuarios[total_usuarios].cpf[3]  != '.' || usuarios[total_usuarios].cpf[7]  != '.' || usuarios[total_usuarios].cpf[11] != '-'){
+
+    limpar_terminal();
+    printf("Digite os dados do novo usuario.\n\n");
+    printf("Nome: %s\n", usuarios[total_usuarios].nome);
+    printf("Por favor, insira o CPF no formato correto! (000.000.000-00)\n");
+    printf("CPF: ");
+
+    fgets(usuarios[total_usuarios].cpf, 15, stdin);
+  }
+
+  limpar_terminal();
+  printf("Digite os dados do novo usuario.\n\n");
+  printf("Nome: %s\n", usuarios[total_usuarios].nome);
+  printf("CPF: %s\n", usuarios[total_usuarios].cpf);
+
+  printf("Telefone: ");
+  getchar();
+  fgets(usuarios[total_usuarios].phone, 14, stdin);
+
+  while(usuarios[total_usuarios].phone[0] != '(' || usuarios[total_usuarios].phone[3] != ')' || usuarios[total_usuarios].phone[8] != '-'){
+
+    limpar_terminal();
+    printf("Digite os dados do novo usuario.\n\n");
+    printf("Nome: %s\n", usuarios[total_usuarios].nome);
+    printf("CPF: %s\n", usuarios[total_usuarios].cpf);
+    printf("Por favor, insira o TELEFONE no formato correto! (00)0000-0000\n");
+    printf("Telefone: ");
+
+    fgets(usuarios[total_usuarios].phone, 14, stdin);
+
+  }
+
+  limpar_terminal();
+  printf("Digite os dados do novo usuario.\n\n");
+  printf("Nome: %s\n", usuarios[total_usuarios].nome);
+  printf("CPF: %s\n", usuarios[total_usuarios].cpf);
+  printf("Telefone: %s\n", usuarios[total_usuarios].phone);
+
+  int oi = 0;
+
+  while(oi != 1){
+
+    printf("Email: ");
+    getchar();
+    fgets(usuarios[total_usuarios].email, max, stdin);
+
+    oi = 0;
+
+    for(int i = 0; usuarios[total_usuarios].email[i] != '\0'; i++){
+        if(usuarios[total_usuarios].email[i] == '@'){
+            oi = 1;
+            break;
+        }
+    }
+
+    if(oi != 1){
+      limpar_terminal();
+      printf("Digite os dados do novo usuario.\n\n");
+      printf("Nome: %s\n", usuarios[total_usuarios].nome);
+      printf("CPF: %s\n", usuarios[total_usuarios].cpf);
+      printf("Telefone: %s\n", usuarios[total_usuarios].phone);
+      printf("Por favor, insira um Email valido!\n");
+    }
+  }
+
+  //esse getchar eh pra forcar quem esta usando a apertar qualquer tecla pra continuar, mas a gente pode mudar isso depois
+  limpar_terminal();
+  printf("\nUsuario cadastrado com sucesso!\n");
+  getchar();
+
+  limpar_terminal();
+
+  usuarios[max_usuarios].id_usuario++;
+}
 
 int main() {
 
@@ -149,6 +252,10 @@ int main() {
 
       if(input == 1){
         input = realizar_cadastro();
+        if(input == 1){
+          limpar_terminal();
+          cadastrar_usuario();
+        }
         //forcando o usuario a escolher uma opcao valida
         if(input <= 0 || input > 4){
           while (1) {
