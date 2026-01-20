@@ -4,6 +4,7 @@
 #include <string.h>
 #define max 50
 #define max_usuarios 50
+int idglobal_usuarios = 1000;
 
 //menus
 void limpar_terminal() {
@@ -17,7 +18,7 @@ void limpar_terminal() {
 int menu_principal() {
 
   //Create Read Update Delete
-  printf("PLATAFORMA DE GERENCIAMENTO DE ASSINATURAS\n\n");
+  printf("PLATAFORMA DE GERENCIAMENTO DE ASSINATURAS DE STREAMING\n\n");
   printf("Escolha umas das seguintes opcoes:\n");
   printf("1 - Realizar um cadastro de clientes, plataformas ou assinaturas.\n");
   printf("2 - Consultar os dados de clientes, plataformas, ou assinaturas.\n");
@@ -218,8 +219,64 @@ void cadastrar_usuario(){
 
   limpar_terminal();
 
-  usuarios[max_usuarios].id_usuario++;
+  idglobal_usuarios++;
+  total_usuarios++;
+  usuarios[max_usuarios].id_usuario = idglobal_usuarios + 1;
 }
+
+//funcoes de consulta
+void consultar_usuario(){
+
+  char consulta_cpf[15];
+
+  printf("Digite o CPF do usuario o qual os dados serao consultados: ");
+  getchar();
+  fgets(consulta_cpf, 15, stdin);
+
+  
+  consulta_cpf[strcspn(consulta_cpf, "\n")] = '\0';
+
+  while(consulta_cpf[3] != '.' || consulta_cpf[7] != '.' || consulta_cpf[11] != '-'){
+
+    limpar_terminal();
+    printf("Por favor, insira o CPF no formato correto! (000.000.000-00)\n");
+    printf("Digite o CPF do usuario o qual os dados serao consultados: ");
+
+    fgets(consulta_cpf, 15, stdin);
+    
+    //pra remover a quebra de linha
+    for(int i = 0; i < 15; i++){
+      if(consulta_cpf[i] == '\n'){
+      consulta_cpf[i] = '\0';
+      break;
+      }
+    }
+  }
+
+  int encontrado = 0;
+  for(int i = 0; i < total_usuarios; i++){
+    if(strcmp(usuarios[i].cpf, consulta_cpf) == 0){
+
+      limpar_terminal();
+      printf("Usuario encontrado!\n\n");
+      printf("Nome: %s\n", usuarios[i].nome);
+      printf("CPF: %s\n", usuarios[i].cpf);
+      printf("Id do usuario: %d\n", usuarios[i].id_usuario);
+      printf("Telefone: %s\n", usuarios[i].phone);
+      printf("Email: %s\n", usuarios[i].email);
+
+      encontrado = 1;
+      break;
+    }
+  }
+
+  if(!encontrado){
+    printf("Usuario nao encontrado!\n");
+  }
+
+  getchar();
+}
+
 
 int main() {
 
@@ -234,16 +291,10 @@ int main() {
     limpar_terminal();
     
     //forcando o usuario a escolher uma opcao valida
-    if (input <= 0 || input > 5){
-      while (1) {
-        limpar_terminal();
-        printf("Por favor insira uma opcao valida!\n");
-        input = menu_principal();
-        if(input >= 1 && input <= 5) {
-          break;
-        }
-
-      }
+    while (input <= 0 || input > 5){
+      limpar_terminal();
+      printf("Por favor insira uma opcao valida!\n");
+      input = menu_principal();
     }
 
     limpar_terminal();
@@ -256,17 +307,12 @@ int main() {
           limpar_terminal();
           cadastrar_usuario();
         }
-        //forcando o usuario a escolher uma opcao valida
-        if(input <= 0 || input > 4){
-          while (1) {
-            limpar_terminal();
-            printf("Por favor insira uma opcao valida!\n");
-            input = realizar_cadastro();
-            if(input >= 1 && input <= 4){
-              break;
-            }
 
-          }
+        //forcando o usuario a escolher uma opcao valida 
+        while (input <= 0 || input > 4){
+          limpar_terminal();
+          printf("Por favor insira uma opcao valida!\n");
+          input = realizar_cadastro();
         }
         if(input == 4){
           break;
@@ -274,18 +320,20 @@ int main() {
 
       }else if(input == 2){
         input = realizar_consulta();
+        if(input == 1){
+          limpar_terminal();
+          consultar_usuario();
+          getchar();
+          limpar_terminal();
+        }
 
         //forcando o usuario a escolher uma opcao valida
-        if(input <= 0 || input > 4){
-          while (1) {
-            limpar_terminal();
-            printf("Por favor insira uma opcao valida!\n");
-            input = realizar_consulta();
-            if(input >= 1 && input <= 4) {
-              break;
-            }
-          }
+        while (input <= 0 || input > 4){
+          limpar_terminal();
+          printf("Por favor insira uma opcao valida!\n");
+          input = realizar_consulta(); 
         }
+        
         if(input == 4){
           break;
         }
@@ -293,35 +341,24 @@ int main() {
       }else if(input == 3){
         input = realizar_alteracao();
         //forcando o usuario a escolher uma opcao valida
-        if(input <= 0 || input > 4){
-          while (1) {
-            limpar_terminal();
-            printf("Por favor insira uma opcao valida!\n");
-            input = realizar_alteracao();
-            if(input >= 1 && input <= 4) {
-              break;
-            }
+        while (input <= 0 || input > 4) {
+          limpar_terminal();
+          printf("Por favor insira uma opcao valida!\n");
+          input = realizar_alteracao(); 
 
-          }
         }
         if(input == 4){
             break;
-          }
+        }
       
       }else if(input == 4){
         input = realizar_exclusao();
 
         //forcando o usuario a escolher uma opcao valida
-        if(input <= 0 || input > 4){
-          while (1) {
-            limpar_terminal();
-            printf("Por favor insira uma opcao valida!\n");
-            input = realizar_exclusao();
-            if(input >= 1 && input <= 4) {
-              break;
-            }
-
-          }
+        while (input <= 0 || input > 4) {
+          limpar_terminal();
+          printf("Por favor insira uma opcao valida!\n");
+          input = realizar_exclusao();
         }
         if(input == 4){
           break;
