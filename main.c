@@ -270,8 +270,9 @@ void consultar_usuario(){
     }
   }
 
-  if(!encontrado){
-    printf("Usuario nao encontrado!\n");
+  if(encontrado == 0){
+    limpar_terminal();
+    printf("Usuario nao encontrado!\n\n");
   }
 
   getchar();
@@ -325,6 +326,7 @@ int main() {
           consultar_usuario();
           getchar();
           limpar_terminal();
+          input = 2;
         }
 
         //forcando o usuario a escolher uma opcao valida
