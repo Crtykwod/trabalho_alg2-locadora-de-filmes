@@ -3,10 +3,9 @@
 #include <ctype.h>
 #include <string.h>
 #define max 50
-#define max_usuarios 50
+#define max_char 50
 int idglobal_usuarios = 1000;
 
-//menus
 void limpar_terminal() {
 #ifdef _WIN32
   system("cls");
@@ -15,6 +14,7 @@ void limpar_terminal() {
 #endif
 }
 
+//menus
 int menu_principal() {
 
   //Create Read Update Delete
@@ -120,24 +120,28 @@ typedef struct {
 
 }ASSINATURAS;
 
-USUARIOS usuarios[max_usuarios];
+USUARIOS usuarios[max];
 int total_usuarios = 0;
+PLATAFORMAS plataformas[max];
+int total_plataformas = 0;
 
 //funcoes de cadastro
 void cadastrar_usuario(){
 
-  if(total_usuarios >= max_usuarios){
+  if(total_usuarios >= max){
+    limpar_terminal();
     printf("Limite de usuarios atingido!\n");
+    getchar();
     return;
   }
 
   printf("Digite os dados do novo usuario.\n\n");
-  printf("Nome: ");\
+  printf("Nome: ");
   getchar();
-  fgets(usuarios[total_usuarios].nome, max, stdin);
+  fgets(usuarios[total_usuarios].nome, max_char, stdin);
 
   //pra remover o \n no final do nome do caba
-  for(int i = 0; i < max; i++){
+  for(int i = 0; i < max_char; i++){
     if(usuarios[total_usuarios].nome[i] == '\n'){
       usuarios[total_usuarios].nome[i] = '\0';
     }
@@ -191,7 +195,7 @@ void cadastrar_usuario(){
 
     printf("Email: ");
     getchar();
-    fgets(usuarios[total_usuarios].email, max, stdin);
+    fgets(usuarios[total_usuarios].email, max_char, stdin);
 
     oi = 0;
 
@@ -221,7 +225,86 @@ void cadastrar_usuario(){
 
   idglobal_usuarios++;
   total_usuarios++;
-  usuarios[max_usuarios].id_usuario = idglobal_usuarios + 1;
+  usuarios[max].id_usuario = idglobal_usuarios + 1;
+}
+
+void cadastrar_plataforma(){
+
+  if(total_plataformas >= max){
+    limpar_terminal();
+    printf("Limite de plataformas atingido!\n");
+    getchar();
+    return;
+  }
+
+  printf("Digite os dados da nova plataforma.\n\n");
+  printf("Nome: ");
+  getchar();
+  fgets(plataformas[total_plataformas].nome_plataforma, max_char, stdin);
+
+  //pra remover o \n no final do nome do servico
+  for(int i = 0; i < max_char; i++){
+    if(plataformas[total_plataformas].nome_plataforma[i] == '\n'){
+      plataformas[total_plataformas].nome_plataforma[i] = '\0';
+    }
+  }
+
+  printf("Categoria: ");
+  fgets(plataformas[total_plataformas].categoria, max_char, stdin);
+  
+  //pra remover o \n no final da categoria
+  for(int i = 0; i < max_char; i++){
+    if(plataformas[total_plataformas].categoria[i] == '\n'){
+      plataformas[total_plataformas].categoria[i] = '\0';
+    }
+  }
+
+  printf("Valor: R$");
+  scanf("%f", &plataformas[total_plataformas].preco);
+
+  
+
+  printf("Site: ");
+  getchar();
+  fgets(plataformas[total_plataformas].site_url, max_char, stdin);
+
+  int ponto_final = 0;
+
+  while(ponto_final == 0){
+
+    ponto_final = 0;
+
+    for(int i = 0; plataformas[total_plataformas].site_url[i] != '\0'; i++){
+      if(plataformas[total_plataformas].site_url[i] == '.'){
+        ponto_final = 1;
+        break;
+      }
+    }
+    if(ponto_final == 0){
+      limpar_terminal();
+      printf("Digite os dados da nova plataforma.\n\n");
+      printf("Nome: %s\n", plataformas[total_plataformas].nome_plataforma);
+      printf("Categoria: %s\n", plataformas[total_plataformas].categoria);
+      printf("Valor: R$%.2f\n", plataformas[total_plataformas].preco);
+      printf("Por favor, insira um Site valido!\n");
+      printf("Site: ");
+      fgets(plataformas[total_plataformas].site_url, max_char, stdin);
+    }
+  }
+
+
+  //pra remover o \n
+  for(int i = 0; i < max_char; i++){
+    if(plataformas[total_plataformas].site_url[i] == '\n'){
+      plataformas[total_plataformas].site_url[i] = '\0';
+    }
+  }
+
+  limpar_terminal();
+  printf("\nPlataforma cadastrada com sucesso!\n");
+  getchar();
+  limpar_terminal();
+
 }
 
 //funcoes de consulta
@@ -307,6 +390,11 @@ int main() {
         if(input == 1){
           limpar_terminal();
           cadastrar_usuario();
+          input = 1;
+        }else if(input == 2){
+          limpar_terminal();
+          cadastrar_plataforma();
+          input = 1;
         }
 
         //forcando o usuario a escolher uma opcao valida 
