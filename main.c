@@ -86,6 +86,13 @@ int realizar_exclusao(){
 
 //structs
 typedef struct {
+  int dia;
+  int mes;
+  int ano;
+
+}DATAS;
+
+typedef struct {
   char nome[max];
   char cpf[15]; //campo unico da struct; 15 contandos hifens e pontos
   int id_usuario; 
@@ -113,13 +120,6 @@ typedef struct {
   float valor_pago;
 
 }ASSINATURAS;
-
-typedef struct {
-  int dia;
-  int mes;
-  int ano;
-
-}DATAS;
 
 USUARIOS usuarios[max];
 int total_usuarios = 0;
@@ -198,12 +198,19 @@ void cadastrar_usuario(){
     getchar();
     fgets(usuarios[total_usuarios].email, max_char, stdin);
 
+    //removedor de \n
+    for(int i = 0; i < max_char; i++){
+      if(usuarios[total_usuarios].email[i] == '\n'){
+        usuarios[total_usuarios].email[i] = '\0';
+      }
+    }
+
     oi = 0;
 
     for(int i = 0; usuarios[total_usuarios].email[i] != '\0'; i++){
         if(usuarios[total_usuarios].email[i] == '@'){
-            oi = 1;
-            break;
+          oi = 1;
+          break;
         }
     }
 
@@ -313,18 +320,15 @@ void consultar_usuario(){
 
   char consulta_cpf[15];
 
-  printf("Digite o CPF do usuario o qual os dados serao consultados: ");
+  printf("Digite o CPF do usuario o qual os dados serao consultados:\n\n");
   getchar();
   fgets(consulta_cpf, 15, stdin);
-
-  
-  consulta_cpf[strcspn(consulta_cpf, "\n")] = '\0';
 
   while(consulta_cpf[3] != '.' || consulta_cpf[7] != '.' || consulta_cpf[11] != '-'){
 
     limpar_terminal();
     printf("Por favor, insira o CPF no formato correto! (000.000.000-00)\n");
-    printf("Digite o CPF do usuario o qual os dados serao consultados: ");
+    printf("Digite o CPF do usuario o qual os dados serao consultados: \n\n");
 
     fgets(consulta_cpf, 15, stdin);
     
@@ -357,13 +361,194 @@ void consultar_usuario(){
   if(encontrado == 0){
     limpar_terminal();
     printf("Usuario nao encontrado!\n\n");
+    getchar();
   }
 
   getchar();
 }
 
+//funcoes de alteracao
+void alterar_usuario(){
 
-int main() {
+  char procurar_cpf[15];
+
+  printf("Digite o CPF do usuario o qual os dados serao alterados: \n\n");
+  getchar();
+  fgets(procurar_cpf, 15, stdin);
+
+  while(procurar_cpf[3] != '.' || procurar_cpf[7] != '.' || procurar_cpf[11] != '-'){
+
+    limpar_terminal();
+    printf("Por favor, insira o CPF no formato correto! (000.000.000-00)\n");
+    printf("Digite o CPF do usuario o qual os dados serao alterados: \n\n");
+
+    fgets(procurar_cpf, 15, stdin);
+    
+    //pra remover a quebra de linha
+    for(int i = 0; i < 15; i++){
+      if(procurar_cpf[i] == '\n'){
+      procurar_cpf[i] = '\0';
+      break;
+      }
+    }
+  }
+
+  /*esse inteiro "usuario" serve como um localizador do usuario apos ele ser encontrado,
+  acredito que seria possivel utilizar ponteiros, mas ainda nao estou confiante pra isso*/
+  int opcao_de_alteracao;
+  int usuario = 0;
+  int encontrado = 1;
+  for(int i = 0; i < total_usuarios; i++){
+    encontrado = strcmp(usuarios[i].cpf, procurar_cpf);
+    if(encontrado == 0){
+
+      while(1){
+        usuario = i;
+        limpar_terminal();
+        printf("Qual dado do usuario sera alterado?\n");
+        printf("Escolha uma das opcoes abaixo:\n\n");
+        printf("1 - Nome: %s\n", usuarios[i].nome);
+        printf("2 - CPF: %s\n", usuarios[i].cpf);
+        printf("3 - Telefone: %s\n", usuarios[i].phone);
+        printf("4 - Email: %s\n", usuarios[i].email);
+        printf("5 - Voltar\n\n");
+
+        scanf("%d", &opcao_de_alteracao);
+
+        while(opcao_de_alteracao < 1 || opcao_de_alteracao > 5){
+          limpar_terminal();
+          printf("Qual dado do usuario sera alterado?\n");
+          printf("Escolha uma das opcoes abaixo:\n");
+          printf("Por favor escolha uma opcao valida!\n\n");
+          printf("1 - Nome: %s\n", usuarios[i].nome);
+          printf("2 - CPF: %s\n", usuarios[i].cpf);
+          printf("3 - Telefone: %s\n", usuarios[i].phone);
+          printf("4 - Email: %s\n", usuarios[i].email);
+          printf("5 - Voltar\n\n");
+
+          scanf("%d", &opcao_de_alteracao);
+        }
+
+        //alterar nome
+        if(opcao_de_alteracao == 1){
+          limpar_terminal();
+          printf("Digite o novo nome do usuario:\n\n");
+          getchar();
+          fgets(usuarios[usuario].nome, max_char, stdin);
+
+          //removedor de \n
+          for(int i = 0; i < max_char; i++){
+            if(usuarios[usuario].nome[i] == '\n'){
+              usuarios[usuario].nome[i] = '\0';
+            }
+          }
+
+          limpar_terminal();
+          printf("Alteracao realizada com sucesso!\n");
+          getchar();
+        }
+
+        //alterar cpf
+        if(opcao_de_alteracao == 2){
+          limpar_terminal();
+          printf("Digite o novo CPF do usuario:\n\n");
+          getchar();
+          fgets(usuarios[usuario].cpf, 15, stdin);
+        
+          while(usuarios[usuario].cpf[3]  != '.' || usuarios[usuario].cpf[7]  != '.' || usuarios[usuario].cpf[11] != '-'){
+
+          limpar_terminal();
+          printf("Por favor, insira o CPF no formato correto! (000.000.000-00)\n");
+          printf("Digite o novo CPF do usuario:\n\n");
+          fgets(usuarios[usuario].cpf, 15, stdin);
+          }
+
+          limpar_terminal();
+          getchar();
+          printf("Alteracao realizada com sucesso!\n");
+          getchar();
+        }
+
+        //alterar telefone
+        if(opcao_de_alteracao == 3){
+          limpar_terminal();
+          printf("Digite o novo telefone do usuario:\n\n");
+          getchar();
+          fgets(usuarios[usuario].phone, 14, stdin);
+
+          while(usuarios[usuario].phone[0] != '(' || usuarios[usuario].phone[3] != ')' || usuarios[usuario].phone[8] != '-'){
+
+          limpar_terminal();
+          printf("Por favor, insira o TELEFONE no formato correto! (00)0000-0000\n");
+          printf("Digite o novo telefone do usuario:\n\n");
+          fgets(usuarios[usuario].phone, 14, stdin);
+
+          }
+
+          limpar_terminal();
+          getchar();
+          printf("Alteracao realizada com sucesso!\n");
+          getchar();
+        }
+
+        //alterar email
+        if(opcao_de_alteracao == 4){
+          limpar_terminal();
+          printf("Digite o novo email do usuario:\n\n");
+          getchar();
+          fgets(usuarios[usuario].email, max_char, stdin);
+
+          int a = 0;
+          for(int i = 0; usuarios[usuario].email[i] != '\0'; i++){
+            if(usuarios[usuario].email[i] == '@'){
+              a = 1;
+            }
+          }
+
+          //removedor de \n
+          for(int i = 0; i < max_char; i++){
+            if(usuarios[usuario].email[i] == '\n'){
+              usuarios[usuario].email[i] = '\0';
+            }
+          }
+          
+          while(a != 1){
+            limpar_terminal();
+            printf("Por favor, insira um Email valido!\n");
+            printf("Digite o novo email do usuario:\n\n");
+            fgets(usuarios[usuario].email, max_char, stdin);
+
+            //removedor de \n
+            for(int i = 0; i < max_char; i++){
+              if(usuarios[usuario].email[i] == '\n'){
+                usuarios[usuario].email[i] = '\0';
+              }
+            }
+
+            for(int i = 0; usuarios[usuario].email[i] != '\0'; i++){
+            if(usuarios[usuario].email[i] == '@'){
+              a = 1;
+            }
+            }
+          }
+
+        limpar_terminal();
+        printf("Alteracao realizada com sucesso!\n");
+      }
+
+        if(opcao_de_alteracao == 5){
+          break;
+        }
+      }
+  
+    }else{
+      limpar_terminal();
+      printf("Usuario nao encontrado!\n\n");
+    }
+  }
+}
+
+int main(){
 
   while(1){
     
@@ -408,7 +593,7 @@ int main() {
           break;
         }
 
-      }else if(input == 2){
+        }else if(input == 2){
         input = realizar_consulta();
         if(input == 1){
           limpar_terminal();
@@ -431,6 +616,14 @@ int main() {
 
       }else if(input == 3){
         input = realizar_alteracao();
+        if(input == 1){
+          limpar_terminal();
+          alterar_usuario();
+          getchar();
+          limpar_terminal();
+          input = 3;
+        }
+
         //forcando o usuario a escolher uma opcao valida
         while (input <= 0 || input > 4) {
           limpar_terminal();
