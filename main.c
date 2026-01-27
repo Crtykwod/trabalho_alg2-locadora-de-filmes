@@ -360,6 +360,7 @@ void consultar_usuario(){
 
   if(encontrado == 0){
     limpar_terminal();
+    
     printf("Usuario nao encontrado!\n\n");
     getchar();
   }
@@ -548,6 +549,50 @@ void alterar_usuario(){
   }
 }
 
+//funcoes de exclusao
+void excluir_usuario(){
+
+  char cpf_exclusao[15];
+
+  printf("Digite o CPF do usuario que sera excluido:\n\n");
+  getchar();
+  fgets(cpf_exclusao, 15, stdin);
+
+  while(cpf_exclusao[3] != '.' || cpf_exclusao[7] != '.' || cpf_exclusao[11] != '-'){
+
+    limpar_terminal();
+    printf("Por favor, insira o CPF no formato correto! (000.000.000-00)\n");
+    printf("Digite o CPF do usuario que sera excluido:\n\n");
+    fgets(cpf_exclusao, 15, stdin);
+  }
+
+  int encontrado = 0;
+
+  for(int i = 0; i < total_usuarios; i++){
+    if(strcmp(usuarios[i].cpf, cpf_exclusao) == 0){
+
+      // desloca na frente do excluido para tras
+      for(int j = i; j < total_usuarios - 1; j++){
+        usuarios[j] = usuarios[j + 1];
+      }
+
+      total_usuarios--;
+      encontrado = 1;
+
+      limpar_terminal();
+      printf("Usuario excluido com sucesso!\n");
+      getchar();
+      break;
+    }
+  }
+
+  if(encontrado == 0){
+    limpar_terminal();
+    printf("Usuario nao encontrado!\n");
+    getchar();
+  }
+}
+
 int main(){
 
   while(1){
@@ -572,6 +617,7 @@ int main(){
     while(1){
 
       if(input == 1){
+        limpar_terminal();
         input = realizar_cadastro();
         if(input == 1){
           limpar_terminal();
@@ -594,6 +640,7 @@ int main(){
         }
 
         }else if(input == 2){
+        limpar_terminal();
         input = realizar_consulta();
         if(input == 1){
           limpar_terminal();
@@ -615,6 +662,7 @@ int main(){
         }
 
       }else if(input == 3){
+        limpar_terminal();
         input = realizar_alteracao();
         if(input == 1){
           limpar_terminal();
@@ -632,11 +680,18 @@ int main(){
 
         }
         if(input == 4){
-            break;
+          break;
         }
       
       }else if(input == 4){
+        limpar_terminal();
         input = realizar_exclusao();
+        if(input == 1){
+          limpar_terminal();
+          excluir_usuario();
+          input = 4;
+
+        }
 
         //forcando o usuario a escolher uma opcao valida
         while (input <= 0 || input > 4) {
