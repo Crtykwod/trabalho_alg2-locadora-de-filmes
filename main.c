@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 #define max 50
 #define max_char 50
 int idglobal_usuarios = 1000;
@@ -85,16 +86,9 @@ int realizar_exclusao(){
 
 //structs
 typedef struct {
-  int dia;
-  int mes;
-  int ano;
-
-}DATAS;
-
-typedef struct {
   char nome[max];
-  char cpf[15]; //contandos hifens e pontos
-  int id_usuario; //campo unico da struct
+  char cpf[15]; //campo unico da struct; 15 contandos hifens e pontos
+  int id_usuario; 
   char phone[14]; //contando parenteses e hifens
   char email[max];
 
@@ -119,6 +113,13 @@ typedef struct {
   float valor_pago;
 
 }ASSINATURAS;
+
+typedef struct {
+  int dia;
+  int mes;
+  int ano;
+
+}DATAS;
 
 USUARIOS usuarios[max];
 int total_usuarios = 0;
