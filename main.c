@@ -75,7 +75,7 @@ void ValidarCpf(char *cpf){
 }
 
 void ValidarTelefone(char *telefone){
-    //(00)0000-0000
+    //(00)00000-0000
     while(1){
         telefone[strcspn(telefone, "\n")] = '\0';
 
